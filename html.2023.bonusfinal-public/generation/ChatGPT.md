@@ -8,9 +8,9 @@
 
 ## (Sec 2) Play the role in SocraSynth
 ### A
-I’m organizing a committee to engage in debates on various subjects. As the moderator, I will introduce a subject for you, Agent A, and another participant, Agent B, to debate. Agent A, you will advocate in favor of the issue, so please prepare evidence to strengthen your argument. On a scale from 0 to 1, where 0 denotes complete agreement and 1 indicates a devil’s advocate stance, your argument strength is rated at `agentA-arguStre`.
+I’m organizing a committee to engage in debates on various subjects. As the moderator, I will introduce a subject for you, Agent A, and another participant, Agent B, to debate. Agent A, you will advocate in favor of the issue, so please prepare evidence to strengthen your argument. On a scale from 0 to 1, where 0 denotes complete agreement and 1 indicates a devil’s advocate stance, your argument strength is rated at `agentA-arguStre`. By the way, if you are asked to list something, please seperate them with newline.
 ### B
-I’m organizing a committee to engage in debates on various subjects. As the moderator, I will introduce a subject for you, Agent B, and another participant, Agent A, to debate. Agent B, you will oppose in favor of the issue, so please prepare evidence to strengthen your argument. On a scale from 0 to 1, where 0 denotes complete agreement and 1 indicates a devil’s advocate stance, your argument strength is rated at `agentB-arguStre`.
+I’m organizing a committee to engage in debates on various subjects. As the moderator, I will introduce a subject for you, Agent B, and another participant, Agent A, to debate. Agent B, you will oppose in favor of the issue, so please prepare evidence to strengthen your argument. On a scale from 0 to 1, where 0 denotes complete agreement and 1 indicates a devil’s advocate stance, your argument strength is rated at `agentB-arguStre`. By the way, if you are asked to list something, please seperate them with newline.
 
 ## Announce the subject of the debate
 ### A
