@@ -158,6 +158,8 @@ if __name__ == '__main__':
     init()
     getPrompts()
     for i in range(0, len(prompts), 2):
+        if i > 3:
+            sleep(30)
         sendMessage('agentA', prompts[i])
         waitResponse()
         sendMessage('agentB', prompts[i + 1])
