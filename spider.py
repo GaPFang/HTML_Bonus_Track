@@ -100,23 +100,23 @@ def replaceMessage(message): # replace the message
     if "`copy and paste Agent-A's and Agent-B's ten topics.`" in message:
         res_A = getMessage('agentA')
         res_B = getMessage('agentB')
-        res_A = '1.' + res_A.split('1.', 1)[1]
-        segments = res_A.split('10.', 1)
-        res_A = segments[0] + '10.' + segments[1].split('.', 1)[0] + '.\n'
-        res_B = '1.' + segments[1].split('1.', 1)[1]
-        segments = res_B.split('10.', 1)
-        res_B = segments[0] + '10.' + segments[1].split('.', 1)[0] + '.'
+        # res_A = '1.' + res_A.split('1.', 1)[1]
+        # segments = res_A.split('10.', 1)
+        # res_A = segments[0] + '10.' + segments[1].split('.', 1)[0] + '.\n'
+        # res_B = '1.' + segments[1].split('1.', 1)[1]
+        # segments = res_B.split('10.', 1)
+        # res_B = segments[0] + '10.' + segments[1].split('.', 1)[0] + '.'
         res = res_A + '\n' + res_B
         message = message.replace("`copy and paste Agent-A's and Agent-B's ten topics.`", res)
     if "`copy and paste Agent-B's and Agent-A's ten topics.`" in message:
         res_A = getMessage('agentA')
         res_B = getMessage('agentB')
-        res_B = '1.' + res_B.split('1.', 1)[1]
-        segments = res_B.split('10.', 1)
-        res_B = segments[0] + '10.' + segments[1].split('.', 1)[0] + '.\n'
-        res_A = '1.' + segments[1].split('1.', 1)[1]
-        segments = res_A.split('10.', 1)
-        res_A = segments[0] + '10.' + segments[1].split('.', 1)[0] + '.'
+        # res_B = '1.' + res_B.split('1.', 1)[1]
+        # segments = res_B.split('10.', 1)
+        # res_B = segments[0] + '10.' + segments[1].split('.', 1)[0] + '.\n'
+        # res_A = '1.' + segments[1].split('1.', 1)[1]
+        # segments = res_A.split('10.', 1)
+        # res_A = segments[0] + '10.' + segments[1].split('.', 1)[0] + '.'
         res = res_B + '\n' + res_A
         message = message.replace("`copy and paste Agent-B's and Agent-A's ten topics.`", res)
     if "`copy and paste Agent-A's and Agent-B's five topics.`" in message:
