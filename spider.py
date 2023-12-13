@@ -55,7 +55,9 @@ json_data = {
 }
 global pause
 pause = False
+global res_A
 res_A = ""
+global res_B
 res_B = ""
 
 # scrape respnse from the website and save it to the file
@@ -101,6 +103,8 @@ def getMessage(agent): # get the message from the agentA or agentB
     return res[-1].text
 
 def replaceMessage(message): # replace the message
+    global res_A
+    global res_B
     if "`agentA-arguStre`" in message:
         message = message.replace("`agentA-arguStre`", str(arguStre_A))
     if "`agentB-arguStre`" in message:
