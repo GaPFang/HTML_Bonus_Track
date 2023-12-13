@@ -32,7 +32,7 @@ top_p_B = 1
 ###########################################
 
 prompts = []
-prompt_index = 2
+prompt_index = 0
 haveWaited = False
 json_data = {
     "subject": subject,
@@ -178,7 +178,7 @@ def sendMessage(agent, message): # send the message to the agentA or agentB
     elif agent == 'agentB':
         action = 'Agent-B'
     message = replaceMessage(message)
-    print(message)
+    # print(message)
     script = """
         text_area = document.getElementById('userinput');
         text_area.value = '""" + message + """';
