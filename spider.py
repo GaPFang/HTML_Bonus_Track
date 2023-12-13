@@ -53,8 +53,10 @@ json_data = {
         "top_p": top_p_B
     }
 }
-global stop
-stop = False
+global pause
+pause = False
+res_A = ""
+res_B = ""
 
 # scrape respnse from the website and save it to the file
 login = "http://140.112.90.203:6464/login"
@@ -106,8 +108,6 @@ def replaceMessage(message): # replace the message
     if "`subject`" in message:
         message = message.replace("`subject`", subject)
     if "`copy and paste Agent-A's and Agent-B's ten topics.`" in message:
-        res_A = getMessage('agentA').split('\n', 3)[3]
-        res_B = getMessage('agentB').split('\n', 3)[3]
         # res_A = '1.' + res_A.split('1.', 1)[1]
         # segments = res_A.split('10.', 1)
         # res_A = segments[0] + '10.' + segments[1].split('.', 1)[0] + '.\n'
@@ -117,8 +117,6 @@ def replaceMessage(message): # replace the message
         res = res_A + '\n' + res_B
         message = message.replace("`copy and paste Agent-A's and Agent-B's ten topics.`", res)
     if "`copy and paste Agent-B's and Agent-A's ten topics.`" in message:
-        res_A = getMessage('agentA').split('\n', 3)[3]
-        res_B = getMessage('agentB').split('\n', 3)[3]
         # res_B = '1.' + res_B.split('1.', 1)[1]
         # segments = res_B.split('10.', 1)
         # res_B = segments[0] + '10.' + segments[1].split('.', 1)[0] + '.\n'
@@ -128,9 +126,6 @@ def replaceMessage(message): # replace the message
         res = res_B + '\n' + res_A
         message = message.replace("`copy and paste Agent-B's and Agent-A's ten topics.`", res)
     if "`copy and paste Agent-A's and Agent-B's five topics.`" in message:
-        print("start to get message", file=sys.stderr)
-        res_A = getMessage('agentA').split('\n', 3)[3]
-        res_B = getMessage('agentB').split('\n', 3)[3]
         # res_A = '1.' + res_A.split('1.', 1)[1]
         # segments = res_A.split('5.', 1)
         # res_A = segments[0] + '5.' + segments[1].split('.', 1)[0] + '.\n'
@@ -138,7 +133,6 @@ def replaceMessage(message): # replace the message
         # segments = res_B.split('5.', 1)
         # res_B = segments[0] + '5.' + segments[1].split('.', 1)[0] + '.'
         res = res_A + '\n' + res_B
-        print("finish getting message", file=sys.stderr)
         message = message.replace("`copy and paste Agent-A's and Agent-B's five topics.`", res)
     if "`copy and paste Agent-B's and Agent-A's five topics.`" in message:
         res_A = getMessage('agentA').split('\n', 3)[3]
@@ -152,8 +146,6 @@ def replaceMessage(message): # replace the message
         res = res_B + '\n' + res_A
         message = message.replace("`copy and paste Agent-B's and Agent-A's five topics.`", res)
     if "`copy and paste Agent-A's Agent-B's perspectives of five topics.`" in message:
-        res_A = getMessage('agentA').split('\n', 3)[3]
-        res_B = getMessage('agentB').split('\n', 3)[3]
         # res_A = '1.' + res_A.split('1.', 1)[1]
         # segments = res_A.split('5.', 1)
         # res_A = segments[0] + '5.' + segments[1].split('.', 1)[0] + '.\n'
@@ -163,8 +155,6 @@ def replaceMessage(message): # replace the message
         res = res_A + '\n' + res_B
         message = message.replace("`copy and paste Agent-A's Agent-B's perspectives of five topics.`", res)
     if "`copy and paste Agent-B's Agent-A's perspectives of five topics.`" in message:
-        res_A = getMessage('agentA').split('\n', 3)[3]
-        res_B = getMessage('agentB').split('\n', 3)[3]
         # res_B = '1.' + res_B.split('1.', 1)[1]
         # segments = res_B.split('5.', 1)
         # res_B = segments[0] + '5.' + segments[1].split('.', 1)[0] + '.\n'
@@ -174,14 +164,8 @@ def replaceMessage(message): # replace the message
         res = res_B + '\n' + res_A
         message = message.replace("`copy and paste Agent-B's Agent-A's perspectives of five topics.`", res)
     if "`copy and paste Agent-A's and Agent-B's debate topics.`" in message:
-        res_A = getMessage('agentA').split('\n', 3)[3]
-        res_B = getMessage('agentB').split('\n', 3)[3]
         res = res_B + '\n' + res_A
         message = message.replace("`copy and paste Agent-A's and Agent-B's debate topics.`", res)
-    if "`copy and paste overlapping five topics`" in message:
-        ##  I don't know how to do this ##
-        print('I don\'t know how to do this:\n`copy and paste overlapping five topics`\n', file=sys.stderr)
-        exit(-1)
     if "`copy and paste Agent-A's debate topics.`" in message:
         res_A = getMessage('agentA')
         message = message.replace("`copy and paste Agent-A's debate topics.`", res_A)
@@ -213,7 +197,6 @@ def sendMessage(agent, message): # send the message to the agentA or agentB
         act.value = '""" + action + """';
         act.nextElementSibling.click();
     """
-    print(script)
     driver.execute_script(script)
     return
 
@@ -237,8 +220,8 @@ def getPrompts(): # get the prompt from ChatGPT.md
             prompts.append(newLine)
 
 def signal_handler(sig, frame): # pause the program
-    global stop
-    stop = ~stop
+    global pause
+    pause = ~pause
 
 signal.signal(signal.SIGUSR1, signal_handler)
 f = open('pause', 'a')
@@ -252,7 +235,7 @@ if __name__ == '__main__':
     init()
     getPrompts()
     while prompt_index < len(prompts):
-        while stop:
+        while pause:
             sleep(1)
         # if prompt_index == ?:
         #     input('press enter to continue...')
@@ -260,5 +243,7 @@ if __name__ == '__main__':
         waitResponse()
         sendMessage('agentB', prompts[prompt_index + 1])
         waitResponse()
+        res_A = getMessage('agentA').split('\n', 3)[-1]
+        res_B = getMessage('agentB').split('\n', 3)[-1]
         prompt_index += 2
     input('press enter to exit...')
