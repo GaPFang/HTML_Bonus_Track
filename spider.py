@@ -2,8 +2,14 @@ import requests
 from selenium import webdriver
 from bs4 import BeautifulSoup as bs
 from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import json
 from time import sleep
+import signal
+import os
+import sys
 
 ###############  variables  ###############
 arguStre_A = 0.9
@@ -26,6 +32,8 @@ top_p_B = 1
 ###########################################
 
 prompts = []
+prompt_index = 0
+haveWaited = False
 json_data = {
     "subject": subject,
     "Agent-A": {
@@ -45,6 +53,8 @@ json_data = {
         "top_p": top_p_B
     }
 }
+global stop
+stop = False
 
 # scrape respnse from the website and save it to the file
 login = "http://140.112.90.203:6464/login"
@@ -55,10 +65,20 @@ driver = webdriver.Chrome()
 driver.get(login)
 
 def init():
-    script = "teamname = document.getElementById('teamname'); teamname.value = 't1509';pw = document.getElementById('passwd'); pw.value = '908c5e';pw.nextElementSibling.nextElementSibling.nextElementSibling.click();"
+    script = """
+        teamname = document.getElementById('teamname');
+        teamname.value = 't1509';
+        pw = document.getElementById('passwd');
+        pw.value = '908c5e';
+        pw.nextElementSibling.nextElementSibling.nextElementSibling.click();
+    """
     driver.execute_script(script)
     driver.get(website)
-    script = "text_area = document.getElementById('llm_config'); text_area.value = '" + json.dumps(json_data) + "';text_area.nextElementSibling.click();"
+    script = """
+        text_area = document.getElementById('llm_config');
+        text_area.value = '""" + json.dumps(json_data) + """';
+        text_area.nextElementSibling.click();
+    """
     driver.execute_script(script)
 
 def waitResponse(): # True if the message is finished
@@ -86,51 +106,71 @@ def replaceMessage(message): # replace the message
     if "`subject`" in message:
         message = message.replace("`subject`", subject)
     if "`copy and paste Agent-A's and Agent-B's ten topics.`" in message:
-        res_A = getMessage('agentA')
-        res_B = getMessage('agentB')
-        res_A = '1.' + res_A.split('1.', 1)[1]
-        segments = res_A.split('10.', 1)
-        res_A = segments[0] + '10.' + segments[1].split('.', 1)[0] + '.\n'
-        res_B = '1.' + segments[1].split('1.', 1)[1]
-        segments = res_B.split('10.', 1)
-        res_B = segments[0] + '10.' + segments[1].split('.', 1)[0] + '.'
+        res_A = getMessage('agentA').split('\n', 3)[3]
+        res_B = getMessage('agentB').split('\n', 3)[3]
+        # res_A = '1.' + res_A.split('1.', 1)[1]
+        # segments = res_A.split('10.', 1)
+        # res_A = segments[0] + '10.' + segments[1].split('.', 1)[0] + '.\n'
+        # res_B = '1.' + segments[1].split('1.', 1)[1]
+        # segments = res_B.split('10.', 1)
+        # res_B = segments[0] + '10.' + segments[1].split('.', 1)[0] + '.'
         res = res_A + '\n' + res_B
         message = message.replace("`copy and paste Agent-A's and Agent-B's ten topics.`", res)
     if "`copy and paste Agent-B's and Agent-A's ten topics.`" in message:
         res_A = getMessage('agentA')
         res_B = getMessage('agentB')
-        res_B = '1.' + res_B.split('1.', 1)[1]
-        segments = res_B.split('10.', 1)
-        res_B = segments[0] + '10.' + segments[1].split('.', 1)[0] + '.\n'
-        res_A = '1.' + segments[1].split('1.', 1)[1]
-        segments = res_A.split('10.', 1)
-        res_A = segments[0] + '10.' + segments[1].split('.', 1)[0] + '.'
+        # res_B = '1.' + res_B.split('1.', 1)[1]
+        # segments = res_B.split('10.', 1)
+        # res_B = segments[0] + '10.' + segments[1].split('.', 1)[0] + '.\n'
+        # res_A = '1.' + segments[1].split('1.', 1)[1]
+        # segments = res_A.split('10.', 1)
+        # res_A = segments[0] + '10.' + segments[1].split('.', 1)[0] + '.'
         res = res_B + '\n' + res_A
         message = message.replace("`copy and paste Agent-B's and Agent-A's ten topics.`", res)
     if "`copy and paste Agent-A's and Agent-B's five topics.`" in message:
+        print("start to get message", file=sys.stderr)
         res_A = getMessage('agentA')
         res_B = getMessage('agentB')
-        res_A = '1.' + res_A.split('1.', 1)[1]
-        segments = res_A.split('5.', 1)
-        res_A = segments[0] + '5.' + segments[1].split('.', 1)[0] + '.\n'
-        res_B = '1.' + segments[1].split('1.', 1)[1]
-        segments = res_B.split('5.', 1)
-        res_B = segments[0] + '5.' + segments[1].split('.', 1)[0] + '.'
+        # res_A = '1.' + res_A.split('1.', 1)[1]
+        # segments = res_A.split('5.', 1)
+        # res_A = segments[0] + '5.' + segments[1].split('.', 1)[0] + '.\n'
+        # res_B = '1.' + segments[1].split('1.', 1)[1]
+        # segments = res_B.split('5.', 1)
+        # res_B = segments[0] + '5.' + segments[1].split('.', 1)[0] + '.'
         res = res_A + '\n' + res_B
+        print("finish getting message", file=sys.stderr)
         message = message.replace("`copy and paste Agent-A's and Agent-B's five topics.`", res)
     if "`copy and paste Agent-B's and Agent-A's five topics.`" in message:
         res_A = getMessage('agentA')
         res_B = getMessage('agentB')
-        res_B = '1.' + res_B.split('1.', 1)[1]
-        segments = res_B.split('5.', 1)
-        res_B = segments[0] + '5.' + segments[1].split('.', 1)[0] + '.\n'
-        res_A = '1.' + segments[1].split('1.', 1)[1]
-        segments = res_A.split('5.', 1)
-        res_A = segments[0] + '5.' + segments[1].split('.', 1)[0] + '.'
+        # res_B = '1.' + res_B.split('1.', 1)[1]
+        # segments = res_B.split('5.', 1)
+        # res_B = segments[0] + '5.' + segments[1].split('.', 1)[0] + '.\n'
+        # res_A = '1.' + segments[1].split('1.', 1)[1]
+        # segments = res_A.split('5.', 1)
+        # res_A = segments[0] + '5.' + segments[1].split('.', 1)[0] + '.'
         res = res_B + '\n' + res_A
         message = message.replace("`copy and paste Agent-B's and Agent-A's five topics.`", res)
-    
-    return message
+    if "`copy and paste overlapping five topics`" in message:
+        ##  I don't know how to do this ##
+        print('I don\'t know how to do this:\n`copy and paste overlapping five topics`\n', file=sys.stderr)
+        exit(-1)
+    if "`copy and paste Agent-A's debate topics.`" in message:
+        res_A = getMessage('agentA')
+        message = message.replace("`copy and paste Agent-A's debate topics.`", res_A)
+    if "`copy and paste Agent-B's debate topics.`" in message:
+        res_B = getMessage('agentB')
+        message = message.replace("`copy and paste Agent-B's debate topics.`", res_B)
+    if "`copy and paste Agent-A's debate topics, if existing.`" in message:
+        res_A = getMessage('agentA')
+        if 'I am ready to deliver my closing statements.' in res_A:
+            message = message.replace("Agent-B, These are arguments from Agent-A:   `copy and paste Agent-A's debate topics, if existing.`", "")
+        waitResponse()
+        res_B = getMessage('agentB')
+        # if 'I am ready to deliver my closing statements.' not in res_B:
+        print("need to check if Agent-B agree or not", file=sys.stderr)
+        exit(-1)
+    return message.replace('\n', ' ').replace('"', '').replace('\'', '')
 
 def sendMessage(agent, message): # send the message to the agentA or agentB
     if agent == 'agentA':
@@ -138,7 +178,15 @@ def sendMessage(agent, message): # send the message to the agentA or agentB
     elif agent == 'agentB':
         action = 'Agent-B'
     message = replaceMessage(message)
-    script = "text_area = document.getElementById('userinput'); text_area.value = '" + message + "';act = document.getElementById('action');act.value = '" + action + "';act.nextElementSibling.click();"
+    # print(message)
+    script = """
+        text_area = document.getElementById('userinput');
+        text_area.value = '""" + message + """';
+        act = document.getElementById('action');
+        act.value = '""" + action + """';
+        act.nextElementSibling.click();
+    """
+    print(script)
     driver.execute_script(script)
     return
 
@@ -146,26 +194,44 @@ def getPrompts(): # get the prompt from ChatGPT.md
     f = open('html.2023.bonusfinal-public/generation/ChatGPT.md', 'r')
     lines = f.readlines()
     f.close()
-    for line in lines[10:]:
-        if line[0] == '#' or line[0] == '\n':
+    i = 10
+    while i < len(lines):
+        if '#' in lines[i] or lines[i][0] == '\n':
+            i += 1
             continue
         else:
-            prompts.append(line.rstrip())
+            newLine = ""
+            while i < len(lines) and '#' not in lines[i]:
+                if lines[i][0] == '\n':
+                    i += 1
+                    continue
+                newLine += lines[i].replace('\n', ' ')
+                i += 1
+            prompts.append(newLine)
 
+def signal_handler(sig, frame): # Ctrl+C
+    global stop
+    stop = ~stop
+
+signal.signal(signal.SIGUSR1, signal_handler)
+f = open('pause', 'a')
+os.chmod('pause', 0o700)
+f.truncate(0)
+f.write('#!/bin/bash\nkill -SIGUSR1 ' + str(os.getpid()))
+f.close()
 
 # main
 if __name__ == '__main__':
     init()
     getPrompts()
-    for i in range(0, len(prompts), 2):
-        if i > 3:
-            sleep(30)
-        sendMessage('agentA', prompts[i])
+    while prompt_index < len(prompts):
+        while stop:
+            sleep(1)
+        # if prompt_index == ?:
+        #     input('press enter to continue...')
+        sendMessage('agentA', prompts[prompt_index])
         waitResponse()
-        sendMessage('agentB', prompts[i + 1])
+        sendMessage('agentB', prompts[prompt_index + 1])
         waitResponse()
-    
-
-
-
-
+        prompt_index += 2
+    input('press enter to exit...')
