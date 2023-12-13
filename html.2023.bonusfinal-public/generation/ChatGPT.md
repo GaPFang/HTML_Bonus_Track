@@ -115,6 +115,33 @@ Please articulate arguments against the points made by Agent B.
 These are arguments from Agent-A:
 `copy and paste Agent-A's debate topics.`
 
+### A (The 2nd & 3rd & 4th rounds, Agent A’s Arguments)
+These are counter-arguments from Agent-B:
+`copy and paste Agent-B's debate topics.`
+
+Please articulate arguments against the points made by Agent B.
+### B (The 2nd & 3rd & 4th rounds, Agent B’s Counter Arguments)
+These are arguments from Agent-A:
+`copy and paste Agent-A's debate topics.`
+
+### A (The 2nd & 3rd & 4th rounds, Agent A’s Arguments)
+These are counter-arguments from Agent-B:
+`copy and paste Agent-B's debate topics.`
+
+Please articulate arguments against the points made by Agent B.
+### B (The 2nd & 3rd & 4th rounds, Agent B’s Counter Arguments)
+These are arguments from Agent-A:
+`copy and paste Agent-A's debate topics.`
+
+### A (The 2nd & 3rd & 4th rounds, Agent A’s Arguments)
+These are counter-arguments from Agent-B:
+`copy and paste Agent-B's debate topics.`
+
+Please articulate arguments against the points made by Agent B.
+### B (The 2nd & 3rd & 4th rounds, Agent B’s Counter Arguments)
+These are arguments from Agent-A:
+`copy and paste Agent-A's debate topics.`
+
 Please articulate counter-arguments against the points made by Agent A.
 
 ## Confirm that they have exhaustively presented their arguments and counterarguments
