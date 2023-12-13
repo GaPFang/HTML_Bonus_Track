@@ -115,7 +115,7 @@ def replaceMessage(message): # replace the message
         # segments = res_B.split('10.', 1)
         # res_B = segments[0] + '10.' + segments[1].split('.', 1)[0] + '.'
         res = res_A + '\n' + res_B
-        message = message.replace("`copy and paste Agent-A's and Agent-B's ten topics.`", res).replace('\n', ' ')
+        message = message.replace("`copy and paste Agent-A's and Agent-B's ten topics.`", res)
     if "`copy and paste Agent-B's and Agent-A's ten topics.`" in message:
         res_A = getMessage('agentA')
         res_B = getMessage('agentB')
@@ -170,7 +170,7 @@ def replaceMessage(message): # replace the message
         # if 'I am ready to deliver my closing statements.' not in res_B:
         print("need to check if Agent-B agree or not", file=sys.stderr)
         exit(-1)
-    return message
+    return message.replace('\n', ' ').replace('"', '').replace('\'', '')
 
 def sendMessage(agent, message): # send the message to the agentA or agentB
     if agent == 'agentA':
@@ -186,6 +186,7 @@ def sendMessage(agent, message): # send the message to the agentA or agentB
         act.value = '""" + action + """';
         act.nextElementSibling.click();
     """
+    print(script)
     driver.execute_script(script)
     return
 
