@@ -10,11 +10,13 @@ from time import sleep
 import signal
 import os
 import sys
+import argparse
 
 ###############  variables  ###############
 arguStre_A = 0.9
 arguStre_B = 0.9
-subject = 'Does technology strengthen connections between people?'
+subject = ''
+# subject = 'Does Pokemon Go do more good than harm to our society?'
 
 model_A = "gpt-3.5-turbo-16k"
 frequency_penalty_A = 0
@@ -178,13 +180,10 @@ def replaceMessage(message): # replace the message
         message = message.replace("`copy and paste Agent-B's debate topics.`", res_B)
     if "`copy and paste Agent-A's debate topics, if existing.`" in message:
         res_A = getMessage('agentA')
-        if 'I am ready to deliver my closing statements.' in res_A:
-            message = message.replace("Agent-B, These are arguments from Agent-A:   `copy and paste Agent-A's debate topics, if existing.`", "")
-        waitResponse()
-        res_B = getMessage('agentB')
-        # if 'I am ready to deliver my closing statements.' not in res_B:
-        print("need to check if Agent-B agree or not", file=sys.stderr)
-        exit(-1)
+        message = message.replace("`copy and paste Agent-A's debate topics, if existing.`", res_A)
+    # if 'I am ready to deliver my closing statements.' not in res_B:
+    #     print("need to check if Agent-B agree or not", file=sys.stderr)
+    #     exit(-1)
     return message.replace('\n', ' ').replace('"', '').replace('\'', '')
 
 def sendMessage(agent, message): # send the message to the agentA or agentB
@@ -236,9 +235,14 @@ f.close()
 
 # main
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('subject', help='debate subject')
+    args = parser.parse_args()
+    subject = args.subject
     init()
     getPrompts()
     while prompt_index < len(prompts):
+        print(prompt_index)
         while pause:
             sleep(1)
         # if prompt_index == ?:
