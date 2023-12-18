@@ -102,7 +102,15 @@ def waitResponse(): # True if the message is finished
 def getMessage(agent): # get the message from the agentA or agentB
     soup = bs(driver.page_source, 'html.parser')
     res = soup.find_all('div', {'class': agent + 'message'})
-    return res[-1].text
+    return res[-1].text.replace('\n', ' ').replace('\t', '')
+
+def getAllMessages(): # get all the messages
+    soup = bs(driver.page_source, 'html.parser')
+    res = soup.find_all('div', {'class': 'message'})
+    fd = open(subject.replace(' ', '_') + '.txt', 'w')
+    for i in range(len(res)):
+        fd.write(res[i].text.replace('\n', ' ').replace('\t', '') + '\n')
+    fd.close()
 
 def replaceMessage(message): # replace the message
     global res_A
@@ -114,59 +122,23 @@ def replaceMessage(message): # replace the message
     if "`subject`" in message:
         message = message.replace("`subject`", subject)
     if "`copy and paste Agent-A's and Agent-B's ten topics.`" in message:
-        # res_A = '1.' + res_A.split('1.', 1)[1]
-        # segments = res_A.split('10.', 1)
-        # res_A = segments[0] + '10.' + segments[1].split('.', 1)[0] + '.\n'
-        # res_B = '1.' + segments[1].split('1.', 1)[1]
-        # segments = res_B.split('10.', 1)
-        # res_B = segments[0] + '10.' + segments[1].split('.', 1)[0] + '.'
         res = res_A + '\n' + res_B
         message = message.replace("`copy and paste Agent-A's and Agent-B's ten topics.`", res)
     if "`copy and paste Agent-B's and Agent-A's ten topics.`" in message:
-        # res_B = '1.' + res_B.split('1.', 1)[1]
-        # segments = res_B.split('10.', 1)
-        # res_B = segments[0] + '10.' + segments[1].split('.', 1)[0] + '.\n'
-        # res_A = '1.' + segments[1].split('1.', 1)[1]
-        # segments = res_A.split('10.', 1)
-        # res_A = segments[0] + '10.' + segments[1].split('.', 1)[0] + '.'
         res = res_B + '\n' + res_A
         message = message.replace("`copy and paste Agent-B's and Agent-A's ten topics.`", res)
     if "`copy and paste Agent-A's and Agent-B's five topics.`" in message:
-        # res_A = '1.' + res_A.split('1.', 1)[1]
-        # segments = res_A.split('5.', 1)
-        # res_A = segments[0] + '5.' + segments[1].split('.', 1)[0] + '.\n'
-        # res_B = '1.' + segments[1].split('1.', 1)[1]
-        # segments = res_B.split('5.', 1)
-        # res_B = segments[0] + '5.' + segments[1].split('.', 1)[0] + '.'
         res = res_A + '\n' + res_B
         message = message.replace("`copy and paste Agent-A's and Agent-B's five topics.`", res)
     if "`copy and paste Agent-B's and Agent-A's five topics.`" in message:
-        res_A = getMessage('agentA').split('\n', 3)[3]
-        res_B = getMessage('agentB').split('\n', 3)[3]
-        # res_B = '1.' + res_B.split('1.', 1)[1]
-        # segments = res_B.split('5.', 1)
-        # res_B = segments[0] + '5.' + segments[1].split('.', 1)[0] + '.\n'
-        # res_A = '1.' + segments[1].split('1.', 1)[1]
-        # segments = res_A.split('5.', 1)
-        # res_A = segments[0] + '5.' + segments[1].split('.', 1)[0] + '.'
+        res_A = getMessage('agentA').replace('\n', ' ').replace('\t', '')
+        res_B = getMessage('agentB').replace('\n', ' ').replace('\t', '')
         res = res_B + '\n' + res_A
         message = message.replace("`copy and paste Agent-B's and Agent-A's five topics.`", res)
     if "`copy and paste Agent-A's Agent-B's perspectives of five topics.`" in message:
-        # res_A = '1.' + res_A.split('1.', 1)[1]
-        # segments = res_A.split('5.', 1)
-        # res_A = segments[0] + '5.' + segments[1].split('.', 1)[0] + '.\n'
-        # res_B = '1.' + segments[1].split('1.', 1)[1]
-        # segments = res_B.split('5.', 1)
-        # res_B = segments[0] + '5.' + segments[1].split('.', 1)[0] + '.'
         res = res_A + '\n' + res_B
         message = message.replace("`copy and paste Agent-A's Agent-B's perspectives of five topics.`", res)
     if "`copy and paste Agent-B's Agent-A's perspectives of five topics.`" in message:
-        # res_B = '1.' + res_B.split('1.', 1)[1]
-        # segments = res_B.split('5.', 1)
-        # res_B = segments[0] + '5.' + segments[1].split('.', 1)[0] + '.\n'
-        # res_A = '1.' + segments[1].split('1.', 1)[1]
-        # segments = res_A.split('5.', 1)
-        # res_A = segments[0] + '5.' + segments[1].split('.', 1)[0] + '.'
         res = res_B + '\n' + res_A
         message = message.replace("`copy and paste Agent-B's Agent-A's perspectives of five topics.`", res)
     if "`copy and paste Agent-A's and Agent-B's debate topics.`" in message:
@@ -181,10 +153,7 @@ def replaceMessage(message): # replace the message
     if "`copy and paste Agent-A's debate topics, if existing.`" in message:
         res_A = getMessage('agentA')
         message = message.replace("`copy and paste Agent-A's debate topics, if existing.`", res_A)
-    # if 'I am ready to deliver my closing statements.' not in res_B:
-    #     print("need to check if Agent-B agree or not", file=sys.stderr)
-    #     exit(-1)
-    return message.replace('\n', ' ').replace('"', '').replace('\'', '')
+    return message.replace('\n', ' ').replace('"', '').replace('\'', '').replace('\t', '')
 
 def sendMessage(agent, message): # send the message to the agentA or agentB
     if agent == 'agentA':
@@ -245,31 +214,15 @@ if __name__ == '__main__':
     init()
     getPrompts()
     while prompt_index < len(prompts):
-        # print(prompt_index)
         while pause:
             sleep(1)
-        # if prompt_index == ?:
-        #     input('press enter to continue...')
         sendMessage('agentA', prompts[prompt_index])
         waitResponse()
         sendMessage('agentB', prompts[prompt_index + 1])
         waitResponse()
-        res_A = getMessage('agentA').split('\n', 3)[-1]
-        res_B = getMessage('agentB').split('\n', 3)[-1]
+        res_A = getMessage('agentA')
+        res_B = getMessage('agentB')
         prompt_index += 2
-    print("A's response:")
-    print(res_A)
-    print("B's response:")
-    print(res_B)
-    # Open a file in write mode ('w')
-    with open(output_file_name+'.txt', 'w') as file:
-        # Write some content to the file
-        file.write("A's response:\n")
-        file.write(res_A)
-        file.write('\n')
-        file.write("B's response:\n")
-        file.write(res_B)
-        file.write('\n')
-
+    getAllMessages()
     if not args.close_directly:
         input('press enter to exit...')
