@@ -162,6 +162,6 @@ Have you exhaustively presented your arguments?
 - If Yes, please say, 'I am ready to deliver my closing statements.'
 - If No, please provide your arguments on the five debate topics.
 ### A (Agent A Conclusions)
-Agent-A, as the proponent of the subject “`subject`”, you advocate the debate topics, so please provide the conclusions of your argument on the five debate topics.
+Agent-A, as the proponent of the subject “`subject`”, you advocate the debate topics, so please provide the conclusions of your argument.
 ### B (Agent B Conclusions)
-Agent-B, as the opponent of the subject “`subject`”, you oppose the debate topics, so please provide the conclusions of your counter-argument on the five debate topics.
+Agent-B, as the opponent of the subject “`subject`”, you oppose the debate topics, so please provide the conclusions of your counter-argument.
