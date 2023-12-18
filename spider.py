@@ -236,13 +236,16 @@ f.close()
 # main
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    parser.add_argument('name', help='name of the subject')
     parser.add_argument('subject', help='debate subject')
+    parser.add_argument('-c', '--close_directly', action='store_true', help="If specified, the program won't wait for input when it end.")
     args = parser.parse_args()
+    output_file_name = args.name
     subject = args.subject
     init()
     getPrompts()
     while prompt_index < len(prompts):
-        print(prompt_index)
+        # print(prompt_index)
         while pause:
             sleep(1)
         # if prompt_index == ?:
@@ -254,4 +257,19 @@ if __name__ == '__main__':
         res_A = getMessage('agentA').split('\n', 3)[-1]
         res_B = getMessage('agentB').split('\n', 3)[-1]
         prompt_index += 2
-    input('press enter to exit...')
+    print("A's response:")
+    print(res_A)
+    print("B's response:")
+    print(res_B)
+    # Open a file in write mode ('w')
+    with open(output_file_name+'.txt', 'w') as file:
+        # Write some content to the file
+        file.write("A's response:\n")
+        file.write(res_A)
+        file.write('\n')
+        file.write("B's response:\n")
+        file.write(res_B)
+        file.write('\n')
+
+    if not args.close_directly:
+        input('press enter to exit...')
