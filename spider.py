@@ -104,10 +104,10 @@ def getMessage(agent): # get the message from the agentA or agentB
     res = soup.find_all('div', {'class': agent + 'message'})
     return res[-1].text.replace('\n', ' ').replace('\t', '')
 
-def getAllMessages(): # get all the messages
+def getAllMessages(output_file_name): # get all the messages
     soup = bs(driver.page_source, 'html.parser')
     res = soup.find_all('div', {'class': 'message'})
-    fd = open(subject.replace(' ', '_') + '.txt', 'w')
+    fd = open(output_file_name + '.txt', 'w')
     for i in range(len(res)):
         fd.write(res[i].text.replace('\n', ' ').replace('\t', '') + '\n')
     fd.close()
@@ -223,6 +223,6 @@ if __name__ == '__main__':
         res_A = getMessage('agentA')
         res_B = getMessage('agentB')
         prompt_index += 2
-    getAllMessages()
+    getAllMessages(output_file_name)
     if not args.close_directly:
         input('press enter to exit...')
