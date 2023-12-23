@@ -102,14 +102,14 @@ def waitResponse(): # True if the message is finished
 def getMessage(agent): # get the message from the agentA or agentB
     soup = bs(driver.page_source, 'html.parser')
     res = soup.find_all('div', {'class': agent + 'message'})
-    return res[-1].text.replace('\n', ' ').replace('\t', '')
+    return res[-1].text
 
 def getAllMessages(output_file_name): # get all the messages
     soup = bs(driver.page_source, 'html.parser')
-    res = soup.find_all('div', {'class': 'message'})
+    res = soup.find_all('div', {'class': ['agentAmessage', 'agentBmessage', 'userAmessage']})
     fd = open(output_file_name + '.txt', 'w')
     for i in range(len(res)):
-        fd.write(res[i].text.replace('\n', ' ').replace('\t', '') + '\n')
+        fd.write(res[i].text)
     fd.close()
 
 def replaceMessage(message): # replace the message
@@ -224,5 +224,16 @@ if __name__ == '__main__':
         res_B = getMessage('agentB')
         prompt_index += 2
     getAllMessages(output_file_name)
+    print("A's response:")
+    print(res_A)
+    print("B's response:")
+    print(res_B)
+    with open(output_file_name+'_final_res.txt', 'w') as file:
+        file.write("A's response:\n")
+        file.write(res_A)
+        file.write('\n')
+        file.write("B's response:\n")
+        file.write(res_B)
+        file.write('\n')
     if not args.close_directly:
         input('press enter to exit...')
