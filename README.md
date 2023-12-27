@@ -3,7 +3,7 @@
 ## Usage
 
 ```shell
-python3 spider.py
+./auto_execute.sh 
 ```
 
 ### Pause and Resume
